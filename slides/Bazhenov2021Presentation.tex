@@ -38,22 +38,20 @@
 %\end{block}
 %\end{frame}
 %-----------------------------------------------------------------------------------------------------
-\begin{frame}{Задача нахождения границ радужки}
+\begin{frame}{Круговые проекции яркости}
 
 \begin{columns}[c]
 \column{0.65\textwidth}
 		$\vec{x}$~--- точка изображения\\ 
 		$\vec{g}(\vec{x})$~--- градиент яркости\\
-		$v_U(\vec{x})$~--- индикатор возможности принадлежания границе
+		$v_U(\vec{x})$~--- индикатор возможности принадлежности границе
 		\[
-		\Pi_U(r) = \frac{1}{2\pi r} \sum_{r-0.5 \leqslant \parallel x \parallel \leqslant r + 0.5} v_U(r)
+		\Pi_U(r) = \frac{1}{2\pi r} \sum_{r-0.5 \leqslant \| x \| \leqslant r + 0.5} v_U(r)
 		\]
 \column{0.35\textwidth}
     \includegraphics[scale=0.2]{img/eye.png}
 \end{columns}
 
-\bigskip
-Важное {\color{red}сообщение}.
 \end{frame}
 
 \end{document}
