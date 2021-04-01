@@ -9,27 +9,31 @@ class Convolutional3Layers(nn.Module):
     def __init__(self):
         super(Convolutional3Layers, self).__init__()
 
-        self.conv1 = nn.Conv1d(1, 10, 5, 2, 2)
+        self.conv1 = nn.Conv1d(2, 10, 5, 2, 2)
         self.norm2 = nn.BatchNorm1d(10)
         self.relu2 = nn.ReLU()
-        self.conv2 = nn.Conv1d(10, 5, 5, 2, 2)
-        self.norm3 = nn.BatchNorm1d(5)
+        self.conv2 = nn.Conv1d(10, 10, 5, 2, 2)
+        self.norm3 = nn.BatchNorm1d(10)
         self.relu3 = nn.ReLU()
-        self.conv3 = nn.Conv1d(5, 5, 5, 2, 2)
-        self.norm4 = nn.BatchNorm1d(5)
+        self.conv3 = nn.Conv1d(10, 20, 5, 2, 2)
+        self.norm4 = nn.BatchNorm1d(20)
         self.relu4 = nn.ReLU()
-        self.flat = nn.Flatten()
-        self.linear4 = nn.Linear(400, 20)
-        self.norm5 = nn.BatchNorm1d(20)
+        self.conv4 = nn.Conv1d(20, 5, 5, 2, 2)
+        self.norm5 = nn.BatchNorm1d(5)
         self.relu5 = nn.ReLU()
-        self.linear5 = nn.Linear(20, 2)
+        self.flat = nn.Flatten()
+        self.linear5 = nn.Linear(100, 30)
+        self.norm6 = nn.BatchNorm1d(30)
+        self.relu6 = nn.ReLU()
+        self.linear6 = nn.Linear(30, 2)
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(self.relu2(self.norm2(x)))
         x = self.conv3(self.relu3(self.norm3(x)))
-        x = self.linear4(self.flat(self.relu4(self.norm4(x))))
+        x = self.conv4(self.relu4(self.norm4(x)))
         x = self.linear5(self.flat(self.relu5(self.norm5(x))))
+        x = self.linear6(self.relu6(self.norm6(x)))
 
         return x
 
