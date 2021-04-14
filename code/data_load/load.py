@@ -39,6 +39,9 @@ def load_dataset(root: str,
     dirs = os.listdir(root)
     datas = []
     for dir in dirs:
-        datas.append(load_data_directory(os.path.join(root, dir), proj_name, params_name))
+        try:
+            datas.append(load_data_directory(os.path.join(root, dir), proj_name, params_name))
+        except:
+            pass
     if len(datas) > 0:
         return pd.concat(datas)
