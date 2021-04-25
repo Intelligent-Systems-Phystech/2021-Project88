@@ -24,8 +24,7 @@
 \institute{Московский физико-технический институт}
 \date{\footnotesize
 \par\smallskip\emph{Курс:} Автоматизация научных исследований\par (практика, В.\,В.~Стрижов)/Группа 821
-\par\smallskip\emph{Эксперт:} И.\,А.~Матвеев
-\par\smallskip\emph{Консультант:} И.\,А.~Матвеев
+\par\smallskip\emph{Эксперт, консультант:} И.\,А.~Матвеев
 \par\bigskip\small 2021}
 %----------------------------------------------------------------------------------------------------------
 \begin{document}
@@ -35,9 +34,9 @@
 \maketitle
 \end{frame}
 
-\begin{frame}{Цели исследования}
+\begin{frame}{Поиск границ}
 \begin{block}{Цель исследования}
-Исследовать возможность применения метода круговых проекций яркости в качестве метода понижения размерности в задачах машинного обучения.
+Применение метода круговых проекций яркости для понижения размерности в задаче обработки изображений.
 \end{block}
 \begin{block}{Задача}
 Построить алгоритм нахождения приблизительных границ элементов глаза на чёрно-белых фотографиях. 
@@ -47,89 +46,124 @@
 \begin{frame}{Круговые проекции яркости}
 \begin{columns}[c]
 \column{0.5\textwidth}
-		$\vec{x}$~--- точка изображения\\ 
-		$\vec{g}(\vec{x})$~--- градиент яркости\\
-		$v_U(\vec{x})$~--- индикатор возможности принадлежности границе\\
-		$\Pi_U(r)$~--- усредненное значение индикатора по кругу радиуса $r$
-\column{0.5\textwidth}
-	\begin{picture}(100,200)
-	\put(0, -10){
-	  \includegraphics[scale=0.27]{img/eye.png}}
-	 \put(64, 160){\vector(-4, -1){15}}
-	 \put(45, 147){$\vec{g}(\vec{x})$}
-    \end{picture}
-\end{columns}
+		\begin{picture}(100,50)
+				\put(0, -10){
+	  			\includegraphics[scale=0.3]{img/eye_only.png}}
+	 			\put(45, 45){\vector(-4, -1){15}}
+	 			\put(25, 30){$\vec{g}(\vec{x})$}
+    	\end{picture}
 
+    	\bigskip
+    	$\vec{x}$~--- точка изображения\\ 
+    	$b(\vec{x})$~--- яркость в точке \\
+		$\vec{g}(\vec{x}) = \nabla b(\vec{x})$
+	
+\column{0.5\textwidth}
+		\includegraphics[scale=0.3]{img/projs.png}
+	
+		$v_U(\vec{x})$~--- индикатор принадлежности границе\\
+		$\Pi_U(r)$~--- усредненное значение индикатора по кругу радиуса $r$
+\end{columns}
 \end{frame}
+
 \begin{frame}{Литература}
 
-\begin{enumerate}
-	\item Обзор алгоритмов обнаружения радужки
-	
-	A.~Nithya and C.~Lakshmi. Iris Recognition Techniques: A Literature Survey. 2015
-	
-	K.~Bowyer, K.~Hollingsworth, and P.~Flynn. Image Understanding for Iris Biometrics: A Survey. 2008
-	
-	\item Описание метода круговых проекций
-	
-	I.\,A.~Matveev. Detection of iris in image by interrelated maxima of brightness gradient projections. 2010
-	
-\end{enumerate}
+\begin{block}{Обзор алгоритмов обнаружения радужки}
+	\begin{enumerate}
+			\item A.~Nithya and C.~Lakshmi. Iris Recognition Techniques: A Literature Survey. 2015
+			\item K.~Bowyer, K.~Hollingsworth, and P.~Flynn. Image Understanding for Iris Biometrics: A Survey. 2008
+	\end{enumerate}
+\end{block}
+
+\begin{block}{Описание метода круговых проекций}
+		\begin{enumerate}
+				\item I.\,A.~Matveev. Detection of iris in image by interrelated maxima of brightness gradient projections. 2010
+		\end{enumerate}
+\end{block}
+
 \end{frame}
 
-\begin{frame}{Постановка задачи}
+\begin{frame}{Задача нахождения границ радужки}
 
-\begin{block}{Дано}
-Выборка $\mathcal{M} = \left\{\left(M(i), P_\text{R}(i), I_\text{R}(i)\right)\right\}_{i=1}^n$~--- множество растровых изображений со зрачком радиуса $P_\text{R}$ и радужкой радиуса $I_\text{R}$.
-\end{block} 
+Задана выборка растровых изображений:
+\[\mathcal{M} = \left\{\left(M(i), P_\text{R}(i), I_\text{R}(i)\right)\right\}_{i=1}^n.\]
 
-\begin{block}{Требуется}
-Построить алгоритм
+\begin{block}{Требуется построить алгоритм}
+\vspace{-0.4cm}
 \[
 	f\!: \quad M \mapsto \left(P_\text{R}, I_\text{R}\right).
 \]
 \end{block}
 
-\begin{block}{Модель}
-Рассматриваются алгоритмы вида
+\begin{block}{Рассматриваются модели вида}
+\vspace{-0.4cm}
 \[
-f = g \circ \Pi,
+f = \varphi \circ \Pi,
 \]
 $\Pi$~--- процедура подсчета круговых проекций,
 \[
-g(x) = \sigma_k\left(W_k^T \sigma_{k-1}\left(\ldots \sigma_1\left(W_1^T x\right)\ldots\right)\right).
+\varphi(t) = \sigma_k\large\left(W_k^T \sigma_{k-1}\large\left(\ldots \sigma_1\left(W_1^T t\right)\ldots\large\right)\large\right).
 \] 
+
 \end{block}
-
-\end{frame}
-
-\begin{frame}{Критерий качества}
-
-Пусть $\left(\widehat{P}_\text{R}(i), \widehat{I}_\text{R}(i)\right) = f(M(i))$. Рассматривается $L$~--- кусочно линейное преобразование относительной ошибки.
-
+\vspace{-0.3cm}
 \begin{block}{Задача оптимизации}
+\vspace{-0.4cm}
 \[
 f_0 = \arg\min_{f \in \mathcal{F}} \sum_{i=1}^n L\left(\widehat{P}_\text{R}(i), P_\text{R}(i)\right) + L\left(\widehat{I}_\text{R}(i), I_\text{R}(i)\right).
 \]
 \end{block}
-
 \end{frame}
 
 \begin{frame}{Обработка круговых проекций}
 
+\begin{block}{Зависимость круговой проекции от радиуса}
+\begin{center}
+\includegraphics[scale=0.27]{img/projs.png}
+\end{center}
+\end{block}
+\vspace{-0.5cm}
 \begin{block}{Гипотеза}
 
 Значения $P_\text{R}$ и $I_\text{R}$ являются точками локальных максимумов функции $\Pi_U(r)$.
 
 \end{block}
 
+\bigskip
+
 Для выделения максимумов и их обработки используются линенйные, сверточные и реккурентные нейронные сети, обучаемые по метрике MSE.
 
 \end{frame}
 
-\begin{frame}{Результаты эксперимента}
+\begin{frame}{Вычислительный эксперимент}
 
-\includegraphics[scale=0.35]{img/mape.png}
+\begin{block}{Цель}
+Сравнить модели по параметрам:
+\begin{enumerate}
+		\item Точность решения;
+		\item Скорость работы.
+\end{enumerate}
+\end{block}
+
+\begin{block}{Обучаемые модели}
+Архитектуры для обработки временных рядов:
+\begin{enumerate}
+		\item Рекурсивные сети;
+		\item Сверточные сети.
+\end{enumerate}
+Простейшие модели:
+\begin{enumerate}
+		\item Полносвязная сеть;
+		\item Эвристический алгоритм.
+\end{enumerate}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Результаты эксперимента}
+\begin{block}{Кривые обучения с доверительным интервалом}
+\includegraphics[scale=0.33]{img/mape.png}
+\end{block}
 
 \end{frame}
 
@@ -137,24 +171,18 @@ f_0 = \arg\min_{f \in \mathcal{F}} \sum_{i=1}^n L\left(\widehat{P}_\text{R}(i), 
 
 \begin{center}
 
-\begin{tabular}{|m{2.2cm}|m{1.9cm}|m{3cm}|m{1.9cm}|}
-
+\begin{tabular}{|c|m{1.9cm}|m{2.3cm}|m{2.5cm}|}
 \hline
-
-& Среднее значение ошибки, \% & Доверительный интервал ошибки & Число параметров\\
+Архитектура & Число \mbox{параметров} & Средняя ошибка, \% & Доверительный интервал\tabularnewline
 \hline
-
-Сверточная сеть & $1.39$ & $1.32$-$1.47$ & $56831$\\
-\hline
-Сверточная сеть & $1.48$ & $1.39$-$1.58$ & $17655$\\
-\hline
-Линейная сеть & $2.21$ & $2.15$-$2.24$ & $166402$\\
-\hline
-Реккурентная сеть & $1.77$ & $1.45$-$2.05$ & $14962$\\
+Полносвязная & $166402$ & $2.21$ & $2.15$-$2.24$\tabularnewline
+Сверточная & $56831$\ & $1.39$ & $1.32$-$1.47$\tabularnewline
+Сверточная & $17655$ & $1.48$ & $1.39$-$1.58$\tabularnewline
+Реккурентная & $14962$ & $1.77$ & $1.45$-$2.05$\tabularnewline
 \hline
 \end{tabular}
-
 \end{center}
+При меньшем числе параметров модели, точность сверточной и реккурентной моделей выше.
 
 \end{frame}
 
